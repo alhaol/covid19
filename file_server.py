@@ -10,10 +10,13 @@ import json
 import mimetypes
 import sys
 from pathlib2 import Path
+import argparse
+
 
 app = Flask(__name__, static_url_path='/assets', static_folder='assets')
-root = os.path.normpath("/tmp")
-key = ""
+
+
+
 
 ignored = ['.bzr', '$RECYCLE.BIN', '.DAV', '.DS_Store', '.git', '.hg', '.htaccess', '.htpasswd', '.Spotlight-V100', '.svn', '__MACOSX', 'ehthumbs.db', 'robots.txt', 'Thumbs.db', 'thumbs.tps']
 datatypes = {'audio': 'm4a,mp3,oga,ogg,webma,wav', 'archive': '7z,zip,rar,gz,tar', 'image': 'gif,ico,jpe,jpeg,jpg,png,svg,webp', 'pdf': 'pdf', 'quicktime': '3g2,3gp,3gp2,3gpp,mov,qt', 'source': 'atom,bat,bash,c,cmd,coffee,css,hml,js,json,java,less,markdown,md,php,pl,py,rb,rss,sass,scpt,swift,scss,sh,xml,yml,plist', 'text': 'txt', 'video': 'mp4,m4v,ogv,webm', 'website': 'htm,html,mhtm,mhtml,xhtm,xhtml'}
@@ -241,8 +244,19 @@ app.add_url_rule('/', view_func=path_view)
 app.add_url_rule('/<path:p>', view_func=path_view)
 
 if __name__ == '__main__':
+    
+
+    my_parser = argparse.ArgumentParser()
+    
+    my_parser.add_argument('-p', help='Path to folder to store files' ,action='store', type=str, required=True)
+    my_parser.add_argument('-k', help='base64 encoding user:pass' ,action='store', type=str, required=True)
+
+
+
+    args = my_parser.parse_args()
+    print(args)
     bind = os.getenv('FS_BIND', '0.0.0.0')
-    port = os.getenv('FS_PORT', '8000')
-    root = os.path.normpath(os.getenv('FS_PATH', os.getcwd()))
-    key = os.getenv('FS_KEY','YWxoYW9sOiFlbWFuITk3Nw==')
+    port = os.getenv('FS_PORT', '9000')
+    root = os.path.normpath(args.p)
+    key = os.getenv('FS_KEY',args.k)
     app.run(bind, port, threaded=True, debug=False)
